@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather and Map App</title>
+    
+    <!-- Mapbox CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+    
+    <!-- Custom Style -->
+    <style>
+        body, html {
+             margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    background-color: #e9eff4;
+        }
+        
+      .app-header {
+    width: 80%;
+    background: black;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px); /* Adjust the height to account for the header */
+}
+
+.top-container, .bottom-container {
+    display: flex;
+    flex: 1;
+}
+        .top-container {
+            display: flex;
+            flex-direction: row;
+            width: 80%;
+            height: 50%;
+        }
+
+        .weather-app-container {
+            width: 50%;
+        background: #ffffff; /* White background for the content */
+        border-radius: 25px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            z-index: 2;
+        }
+        
+        .weather-app-header {
+            background: #f7f9fc;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 0 2px 4px rgba(0,0,0,0);
+        }
+
+        .weather-app-header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .weather-info {
+            padding: 20px;
+        }
+
+        .weather-info div {
+            margin-bottom: 10px;
+        }
+
+        .weather-temperature {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .weather-temperature h2 {
+            font-size: 2em;
+            margin: 0;
+            color: #333;
+        }
+
+        .weather-description {
+            color: #666;
+        }
+
+        .forecast-container {
+            padding: 40px;
+        }
+
+        .forecast-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f7f9fc;
+            margin-bottom: 10px;
+            border-radius: 15px;
+        }
+
+        .forecast-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .forecast-temp {
+            font-weight: bold;
+        }
+
+        .forecast-date {
+            color: #666;
+        }
+
+        #map {
+            width: 50%;
+            height: 100%;
+            z-index: 2;
+          rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(5px); 
+/*           border-radius: 25px; */
+        }
+
+        .bottom-container {
+            display: flex;
+            width: 80%;
+            height: 50%;
+        }
+
+        .chart-container {
+            width: 50%;
+            border-radius: 15px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.8);
+            position: relative;
+  
+        }
+
+ .chat-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between /* Aligns children to the bottom */
+            flex-grow: 1; /* Allows the chat container to grow */
+             height: 100%;
+            width: 50%; /* Adjust the width as necessary */
+            margin: 10px; /* Spacing around the chat container */
+            background: #ffffff; /* Background color for the chat container */
+            border-radius: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Prevents content from spilling outside the border */
+        }
+
+.messages {
+    flex-grow: 1; /* Allows the messages div to take up available space */
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.message {
+    width: 90%; /* Adjust width as needed */
+    margin: 5px auto; /* Center the message bubbles */
+    max-width: 80%;
+    margin-bottom: 10px;
+    padding: 10px;
+    position: relative;
+    color: white;
+    display: flex; /* Ensure message elements are laid out in a row */
+}
+
+.user-message {
+    background-color: #3498DB; /* Blue background for user messages */
+    align-self: flex-end;
+    border-radius: 18px 18px 0 18px;
+    margin-left: auto; /* Align user messages to the right */
+}
+
+.bot-message {
+    background-color: #2ECC71; /* Green background for bot messages */
+    align-self: flex-start;
+    border-radius: 18px 18px 18px 0;
+    margin-right: auto; /* Align bot messages to the left */
+}
+
+
+      .chat-header {
+    padding: 10px;
+    background-color: #3498DB;
+    color: white;
+    text-align: center;
+/*     border-top-left-radius: 15px; */
+/*     border-top-right-radius: 15px; */
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+.user-message::after, .bot-message::after {
+    content: '';
+    position:relative;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 15px solid transparent;
+    border-bottom: 0;
+}
+
+.user-message::after {
+    right: -7px;
+    border-left-color: #3498DB; /* Same as user-message */
+    border-top: 15px solid #3498DB; /* Same as user-message */
+    border-right: 0;
+    margin-top: 2px;
+}
+
+.bot-message::after {
+    left: -7px;
+    border-right-color: #2ECC71; /* Same as bot-message */
+    border-top: 15px solid #2ECC71; /* Same as bot-message */
+    border-left: 0;
+    margin-top: -2px;
+}
+  .chat-input-container {
+            display: flex;
+            padding: 10px;
+            background: #f7f9fc;
+            border-top: 1px solid #e6e9ef;
+        }     
+.chat-input {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 18px;
+            border: 1px solid #ccc;
+        }
+
+   #chat-submit {
+            padding: 10px 20px;
+            background-color: #4d94ff;
+            color: white;
+            border-radius: 18px;
+            border: none;
+            cursor: pointer;
+        }
+
+
+
+      
+
+        /* Additional styles for messages, chat input, etc. */
+    </style>
+    
+    <!-- p5.js and Chart.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+</head>
+  
+<body>
+  <header class="app-header">
+        <h1> Chat Weather  </h1>
+    </header>
+   <div class="app-content">
+    <div class="top-container">
+        <div id="weather-app" class="weather-app-container">
+            <!-- Weather app content goes here -->
+            <div class="weather-app-header">
+                <h1><div id="city" class="city"></div></h1>
+            </div>
+            <div id="weather-info" class="weather-info">
+                <!-- Weather info will be populated here -->
+            </div>
+            <div id="forecast-container" class="forecast-container">
+                <!-- Forecast info will be populated here -->
+            </div>
+        </div>
+
+        <div id="map">
+            <!-- Map will be injected here -->
+        </div>
+    </div>
+
+    <div class="bottom-container">
+        <div class="chart-container">
+            <canvas id="weatherChart"></canvas>
+            <!-- Chart will be injected here -->
+        </div>
+  <div class="chat-container" id="chat-messages">
+      <div class="chat-header">
+        <h2>Let's chat about weather</h2>
+    </div>
+    <div class="messages">
+      
+
+        <!-- Further chat messages will be dynamically inserted here -->
+    </div>
+    <div class="chat-input-container">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Type your message...">
+        <button id="chat-submit">Send</button>
+    </div>
+</div>
+    </div>
+     </div>
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  <!-- Add these in the <head> section of your HTML -->
+
+
+
+    <!-- Your sketch.js Script -->
+    <script src="sketch.js"></script>
+</body>
+</html>
