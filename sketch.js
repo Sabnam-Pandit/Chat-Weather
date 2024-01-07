@@ -1,6 +1,6 @@
-const accessToken = 'pk.eyJ1Ijoic2FibmFtLTEyMyIsImEiOiJjbHBvdWtncWswc3l2Mm1xZmMyNXN3YTV4In0.7LB2sYih2vPViL5auiXKpQ';
-let API_KEY="e1842a55baaaf97d6b8eca29d369d149";
-let palmApiKey = "AIzaSyAttRlbw7FF9vFcBgP1R-eaiZFDJ-rYIfo";
+const accessToken = 'Your access token';
+let API_KEY="Your Key";
+let palmApiKey = "Your key";
 let weatherData;
 let forecastdata;
 let myChart = null;
@@ -55,7 +55,7 @@ loadJSON(forecastApiurl, forecast_Data,'jsonp');
     // Fetch current weather
     const weatherApiUrl = `${WEATHER_API_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
   
-// let weatherApiUrl ="https://api.openweathermap.org/data/2.5/weather?lat=32.7157&lon=-117.1611&appid=e1842a5ca29d369d149";
+// let weatherApiUrl ="https://api.openweathermap.org/data/2.5/weather?lat=32.7157&lon=-117.1611&appid=key";
 loadJSON(weatherApiUrl, gotWeatherData,'jsonp');
 
 
